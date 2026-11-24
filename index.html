@@ -1,0 +1,519 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ReqMind AI Walkthrough</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a product walkthrough. Header facts -> screen-by-screen viewer -> what the run produced -> fixes -> files. */
+:root {
+  --bg: #f6f5fb;
+  --surface: #ffffff;
+  --sunken: #efedf7;
+  --fg: #17142b;
+  --muted: #5d5878;
+  --line: #e0ddee;
+  --accent: #5a45e0;
+  --accent-soft: #ebe8fd;
+  --accent-fg: #ffffff;
+  --good: #11865a;
+  --good-soft: #e3f5ec;
+  --warn: #a35a00;
+  --warn-soft: #fdf0dc;
+  --bad: #b3261e;
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --shadow: 0 1px 2px rgba(23, 20, 43, .06), 0 8px 24px rgba(23, 20, 43, .06);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #110f1c; --surface: #1a1729; --sunken: #221e36; --fg: #ecebf5; --muted: #a8a3c4; --line: #2f2a49;
+    --accent: #9b8cff; --accent-soft: #2a2450; --accent-fg: #120f22; --good: #4fd19a; --good-soft: #143426;
+    --warn: #f0b259; --warn-soft: #3a2a12; --bad: #ff8a80; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #110f1c; --surface: #1a1729; --sunken: #221e36; --fg: #ecebf5; --muted: #a8a3c4; --line: #2f2a49;
+  --accent: #9b8cff; --accent-soft: #2a2450; --accent-fg: #120f22; --good: #4fd19a; --good-soft: #143426;
+  --warn: #f0b259; --warn-soft: #3a2a12; --bad: #ff8a80; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 48px;
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; }
+.wrap > * { min-width: 0; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: -.01em; }
+h2 { font-size: 24px; font-weight: 600; }
+h3 { font-size: 16px; font-weight: 600; }
+p { margin: 0; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lede { color: var(--muted); max-width: 68ch; }
+code, .mono { font-family: var(--font-mono); font-size: .86em; }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+
+/* header */
+header.top { padding-top: 32px; display: grid; gap: 18px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 600; }
+.brand-mark { width: 32px; height: 32px; border-radius: 9px; background: var(--accent); color: var(--accent-fg); display: grid; place-items: center; font-size: 15px; font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+.chip b { color: var(--fg); font-weight: 600; }
+.chip.ok { background: var(--good-soft); border-color: transparent; color: var(--good); }
+.chip.ok b { color: var(--good); }
+.chip.note { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.stat { background: var(--surface); padding: 16px 18px; display: grid; gap: 2px; min-width: 0; }
+.stat .n { font-family: var(--font-display); font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: 13px; color: var(--muted); }
+.stat .s { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+
+/* viewer */
+.section-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.viewer { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 20px; align-items: start; }
+.steps { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); display: grid; gap: 14px; max-height: calc(100vh - 32px); overflow: auto; padding-right: 4px; }
+.stage { display: grid; gap: 2px; }
+.stage-name { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 0 10px 4px; }
+.step { display: grid; grid-template-columns: 26px 1fr; gap: 8px; align-items: baseline; text-align: left; background: none; border: 0; padding: 7px 10px; border-radius: 8px; cursor: pointer; font-size: 14px; color: var(--muted); }
+.step .num { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.step:hover { background: var(--sunken); color: var(--fg); }
+.step[aria-current="true"] { background: var(--accent-soft); color: var(--fg); font-weight: 500; }
+.step[aria-current="true"] .num { color: var(--accent); }
+.stage-select { display: none; }
+.screen { display: grid; gap: 14px; min-width: 0; }
+.frame { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.frame-bar { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.frame-bar .lights { display: flex; gap: 5px; }
+.frame-bar .lights i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); display: block; }
+.frame-bar .url { flex: 1; min-width: 0; font-family: var(--font-mono); background: var(--sunken); border-radius: 6px; padding: 3px 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shot-box { position: relative; background: var(--sunken); max-height: 78vh; overflow: auto; }
+.shot-box img { display: block; width: 100%; height: auto; }
+.caption-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.caption { display: grid; gap: 4px; min-width: 0; flex: 1 1 420px; }
+.caption .t { font-family: var(--font-display); font-size: 19px; font-weight: 600; }
+.caption .d { color: var(--muted); max-width: 72ch; }
+.nav { display: flex; align-items: center; gap: 8px; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; font-size: 14px; font-weight: 500; }
+.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: default; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+.btn.primary:hover:not(:disabled) { color: var(--accent-fg); filter: brightness(1.08); }
+.counter { font-family: var(--font-mono); font-size: 12px; color: var(--muted); min-width: 52px; text-align: center; }
+.kbd-hint { font-size: 12px; color: var(--muted); }
+
+/* input + answers */
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 12px; min-width: 0; }
+.idea { font-size: 15px; line-height: 1.65; }
+.qa { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.qa li { display: grid; grid-template-columns: 52px 1fr; gap: 4px 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.qa li:last-child { border-bottom: 0; padding-bottom: 0; }
+.qa .c { font-family: var(--font-mono); font-size: 12px; color: var(--accent); padding-top: 2px; }
+.qa .q { font-weight: 500; font-size: 14px; }
+.qa .a { grid-column: 2; color: var(--muted); font-size: 14px; }
+
+/* requirements */
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; background: var(--sunken); padding: 4px; border-radius: 10px; }
+.tab { border: 0; background: none; padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: 13px; color: var(--muted); }
+.tab span { font-family: var(--font-mono); font-size: 11px; margin-left: 4px; }
+.tab[aria-selected="true"] { background: var(--surface); color: var(--fg); font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.search { padding: 8px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-size: 14px; width: min(280px, 100%); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); max-height: 560px; overflow-y: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 14px; }
+th { position: sticky; top: 0; background: var(--surface); text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); padding: 10px 14px; border-bottom: 1px solid var(--line); }
+td { padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.code { font-family: var(--font-mono); font-size: 12px; white-space: nowrap; color: var(--accent); }
+td .title { font-weight: 500; }
+td .desc { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.p-must { background: #fde8e7; color: var(--bad); }
+.p-should { background: var(--warn-soft); color: var(--warn); }
+.p-could { background: var(--accent-soft); color: var(--accent); }
+.p-wont { background: var(--sunken); color: var(--muted); }
+:root[data-theme="dark"] .p-must { background: #3a1715; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .p-must { background: #3a1715; } }
+.s-approved { background: var(--good-soft); color: var(--good); }
+.s-draft { background: var(--sunken); color: var(--muted); }
+.v2 { font-family: var(--font-mono); font-size: 11px; color: var(--good); margin-left: 6px; }
+
+/* fixes */
+.fixes { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.fix { display: grid; grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr); gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.fix .before { color: var(--muted); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--bad) 60%, transparent); font-size: 14px; }
+.fix .after { font-size: 14px; font-weight: 500; }
+.fix .arrow { color: var(--accent); text-align: center; }
+.fix .why { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+
+/* files */
+.files { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.file { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; }
+.file .name { font-weight: 600; font-size: 14px; }
+.file .meta { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+.file .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.file .btn { padding: 5px 11px; font-size: 13px; }
+.status-line { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+pre.cmd { margin: 0; background: var(--sunken); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; }
+.callout { border-left: 3px solid var(--warn); background: var(--warn-soft); padding: 12px 14px; border-radius: 0 10px 10px 0; font-size: 14px; }
+
+@media (max-width: 900px) {
+  .viewer { grid-template-columns: 1fr; }
+  .steps { display: none; }
+  .stage-select { display: block; width: 100%; padding: 9px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; }
+  .two { grid-template-columns: 1fr; }
+  .fix { grid-template-columns: 1fr; }
+  .fix .arrow { text-align: left; transform: rotate(90deg); width: 20px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .shot-box img { transition: opacity .18s ease; }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">R</span> ReqMind AI</div>
+    <div style="display:grid;gap:10px">
+      <h1>From one business idea to a traceable blueprint</h1>
+      <p class="lede">A complete run of the rebuilt app through its real web interface: a new workspace, the FieldFlow idea, one uploaded spec, ten answered discovery questions, the full seven-agent blueprint, an approval, a change request and all eight documents. Every screen below was captured from that run.</p>
+    </div>
+    <div class="chips">
+      <span class="chip ok"><span class="dot"></span><b>All steps passed</b> · 0 browser errors</span>
+      <span class="chip">Run <b>24 Nov 2026</b></span>
+      <span class="chip">Branch <b class="mono">feature/reqmind-ai-rebuild</b> · <span class="mono">e7659af</span></span>
+      <span class="chip note"><span class="dot"></span>Mock AI mode (no Anthropic API key in the sandbox)</span>
+    </div>
+    <div class="stats" role="list">
+      <div class="stat" role="listitem"><span class="n">65</span><span class="l">Requirements</span><span class="s">31 FR · 14 NFR · 9 BR · 7 rules · 4 TR</span></div>
+      <div class="stat" role="listitem"><span class="n">31</span><span class="l">User stories</span><span class="s">62 acceptance criteria</span></div>
+      <div class="stat" role="listitem"><span class="n">137</span><span class="l">Test cases</span><span class="s">62 func · 31 neg · 42 bound · 2 int</span></div>
+      <div class="stat" role="listitem"><span class="n">100%</span><span class="l">Trace chains complete</span><span class="s">64 of 64 · 279 links</span></div>
+      <div class="stat" role="listitem"><span class="n">86</span><span class="l">Review quality score</span><span class="s">3 open findings</span></div>
+      <div class="stat" role="listitem"><span class="n">8</span><span class="l">Documents</span><span class="s">PDF · Word · CSV · JSON</span></div>
+    </div>
+  </header>
+
+  <section aria-labelledby="walk">
+    <div class="section-head">
+      <div style="display:grid;gap:6px">
+        <span class="eyebrow">The interface, screen by screen</span>
+        <h2 id="walk">Walk through the run</h2>
+      </div>
+      <span class="kbd-hint">Use ← → to move between screens</span>
+    </div>
+    <div class="viewer">
+      <nav class="steps" id="steps" aria-label="Screens"></nav>
+      <div class="screen">
+        <select class="stage-select" id="stage-select" aria-label="Choose a screen"></select>
+        <div class="frame">
+          <div class="frame-bar"><span class="lights" aria-hidden="true"><i></i><i></i><i></i></span><span class="url" id="url">localhost:3000</span></div>
+          <div class="shot-box" id="shot-box" tabindex="0" aria-label="Screenshot, scrollable">
+            <img id="shot" alt="" width="2400" height="1500">
+          </div>
+        </div>
+        <div class="caption-row">
+          <div class="caption"><span class="t" id="cap-title"></span><span class="d" id="cap-desc"></span></div>
+          <div class="nav">
+            <button class="btn" id="prev" type="button" aria-label="Previous screen">← Prev</button>
+            <span class="counter" id="counter"></span>
+            <button class="btn primary" id="next" type="button" aria-label="Next screen">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="input">
+    <div class="section-head"><div style="display:grid;gap:6px"><span class="eyebrow">What went in</span><h2 id="input">The idea and the stakeholder answers</h2></div></div>
+    <div class="two">
+      <div class="panel">
+        <h3>Business idea (typed into “New project”)</h3>
+        <p class="idea">We want a field service management platform. Dispatchers create work orders from customer requests, assign technicians based on skills and location, and track job progress on a live map. Technicians use a mobile app to view assigned jobs, update job status, capture photos and record parts used, even offline. Customers receive SMS notifications and can rate the service. Managers review dashboards with first-time fix rate and SLA compliance. The system must integrate with our SAP ERP for invoicing.</p>
+        <p class="lede" style="font-size:13px">Plus one uploaded document, <code>field-service-work-orders.md</code>, parsed and indexed as untrusted text.</p>
+      </div>
+      <div class="panel">
+        <h3>Discovery questions and answers</h3>
+        <ul class="qa" id="qa"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="reqs">
+    <div class="section-head"><div style="display:grid;gap:6px"><span class="eyebrow">What came out</span><h2 id="reqs">Requirements produced by the run</h2></div></div>
+    <div class="toolbar">
+      <div class="tabs" role="tablist" id="type-tabs" aria-label="Requirement type"></div>
+      <input class="search" id="req-search" type="search" placeholder="Search requirements" aria-label="Search requirements">
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:96px">ID</th><th>Requirement</th><th style="width:90px">Priority</th><th style="width:100px">Status</th></tr></thead>
+        <tbody id="req-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="fixed">
+    <div class="section-head"><div style="display:grid;gap:6px"><span class="eyebrow">Fixed in this round</span><h2 id="fixed">Requirement quality, before and after</h2></div></div>
+    <p class="lede" style="margin-bottom:16px">The first rerun showed weak spots in the requirements step itself. These are the actual titles from that earlier run and from this one.</p>
+    <ul class="fixes">
+      <li class="fix"><span class="before">Complete work orders on site and capture the customer</span><span class="arrow" aria-hidden="true">→</span><span class="after">Complete work orders on site and capture the customer signature</span><span class="why">Titles now end on a complete phrase instead of being cut after nine words.</span></li>
+      <li class="fix"><span class="before">Assign work orders to technicians based on skills and</span><span class="arrow" aria-hidden="true">→</span><span class="after">Assign work orders to technicians based on skills and availability</span><span class="why">Same fix. Long clauses are shortened at a natural break, never mid-phrase.</span></li>
+      <li class="fix"><span class="before">Order can have part · Order has a reference number · Search should be returned</span><span class="arrow" aria-hidden="true">→</span><span class="after">Removed as FRs. Data rules go to the data model; “Search results should be returned in under 500 ms” is now a performance NFR</span><span class="why">Nouns used as sentence subjects were being read as verbs.</span></li>
+      <li class="fix"><span class="before">9 restated requirements, e.g. “Assign work orders”, “Capture the customer signature”</span><span class="arrow" aria-hidden="true">→</span><span class="after">Merged into the more specific requirement</span><span class="why">Near-duplicates are detected and the most specific wording is kept.</span></li>
+      <li class="fix"><span class="before">Performance requirement · Availability requirement (plus generic baselines beside them)</span><span class="arrow" aria-hidden="true">→</span><span class="after">Dispatch board shall load within 2 seconds · System must be available 99.5% of the time</span><span class="why">NFR titles come from the statement, and a stated target replaces the generic baseline.</span></li>
+      <li class="fix"><span class="before">I want “to Technicians must be able to view…” · when “I Customers receive SMS notifications and can with valid information”</span><span class="arrow" aria-hidden="true">→</span><span class="after">I want to view their assigned work orders on the mobile app · when I rate the service</span><span class="why">Stories and Given/When/Then criteria are built from the capability, with checks that suit the action (view, export, notify, edit).</span></li>
+      <li class="fix"><span class="before">Discovery answers had little effect on the requirements</span><span class="arrow" aria-hidden="true">→</span><span class="after">GDPR and SOC 2 compliance, 7-year retention and 8-hour offline work now appear as requirements</span><span class="why">All ten answers were entered through the UI and flow into every downstream agent.</span></li>
+      <li class="fix"><span class="before">Project switcher showed “Select a project” right after creating one</span><span class="arrow" aria-hidden="true">→</span><span class="after">The new project appears in the switcher at once</span><span class="why">Frontend fix: creating or renaming a project refreshes the project list.</span></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="docs">
+    <div class="section-head"><div style="display:grid;gap:6px"><span class="eyebrow">Generated files</span><h2 id="docs">Documents from this run</h2></div></div>
+    <p class="lede" style="margin-bottom:16px">PDF exports, the OpenAPI file and the Gherkin acceptance criteria. The Word (.docx) versions of all eight documents are attached in the chat.</p>
+    <div class="files" id="files"></div>
+    <p class="status-line" id="dl-status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section aria-labelledby="run">
+    <div class="section-head"><div style="display:grid;gap:6px"><span class="eyebrow">Next step</span><h2 id="run">Run it on your machine</h2></div></div>
+    <div class="two">
+      <div class="panel">
+        <h3>With Docker</h3>
+        <pre class="cmd">git checkout feature/reqmind-ai-rebuild
+cp .env.example .env        # add ANTHROPIC_API_KEY to use Claude
+docker compose up --build
+# open http://localhost:3000</pre>
+        <p class="lede" style="font-size:13px">Without a key the app runs in the same mock mode shown here. With <code>ANTHROPIC_API_KEY</code> set, the seven agents use Claude through the same workflow.</p>
+      </div>
+      <div class="panel">
+        <h3>Getting the code to GitHub</h3>
+        <p class="callout">The push from this session is still refused (HTTP 403): the session isn't authorised to write to <code>unmeshpawar7-cpu/ai-requirements-agent</code>. Add the repository to this session's sources and ask again, or push from the git bundle in the chat. <code>main</code> has not been touched.</p>
+        <pre class="cmd">git clone reqmind-ai-rebuild.bundle reqmind
+cd reqmind &amp;&amp; git remote set-url origin \
+  https://github.com/unmeshpawar7-cpu/ai-requirements-agent.git
+git push origin feature/reqmind-ai-rebuild</pre>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script type="application/json" id="run-data">{"requirements": [{"code": "BR-001", "requirementType": "business", "title": "Work Order management", "description": "The business needs dispatchers, technicians to assign work orders; assign work orders to technicians; cancel work orders when the customer withdraws; complete work orders on site; create work orders from customer requests; create work orders from customer service requests; update work orders until they are completed; view their assigned work orders.", "priority": "must", "version": 1, "status": "draft"}, {"code": "BR-002", "requirementType": "business", "title": "Technician management", "description": "The business needs dispatchers to assign technicians based on skills.", "priority": "must", "version": 1, "status": "draft"}, {"code": "BR-003", "requirementType": "business", "title": "Job management", "description": "The business needs dispatchers, technicians to track job progress on a live map; update job status; view assigned jobs.", "priority": "must", "version": 1, "status": "draft"}, {"code": "BR-004", "requirementType": "business", "title": "Photo management", "description": "The business needs technicians to capture photos.", "priority": "should", "version": 1, "status": "draft"}, {"code": "BR-005", "requirementType": "business", "title": "Part management", "description": "The business needs technicians to record parts used; record parts used on a work order.", "priority": "should", "version": 1, "status": "draft"}, {"code": "BR-006", "requirementType": "business", "title": "Sms Notification management", "description": "The business needs customers to receive sms notifications.", "priority": "should", "version": 1, "status": "draft"}, {"code": "BR-007", "requirementType": "business", "title": "Service management", "description": "The business needs customers to rate the service; request service.", "priority": "should", "version": 1, "status": "draft"}, {"code": "BR-008", "requirementType": "business", "title": "Dashboard management", "description": "The business needs managers to review dashboards.", "priority": "should", "version": 1, "status": "draft"}, {"code": "BR-009", "requirementType": "business", "title": "Operational reporting", "description": "Managers need dashboards and reports on operational performance.", "priority": "should", "version": 1, "status": "draft"}, {"code": "FR-001", "requirementType": "functional", "title": "Rate the service", "description": "Customers receive SMS notifications and can rate the service.", "priority": "could", "version": 1, "status": "approved"}, {"code": "FR-002", "requirementType": "functional", "title": "Integrate with our SAP ERP for invoicing", "description": "The system must integrate with our SAP ERP for invoicing.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-003", "requirementType": "functional", "title": "Work offline for up to 8 hours on iOS", "description": "Technicians must work offline for up to 8 hours on iOS and Android phones and sync within 2 minutes of reconnecting.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-004", "requirementType": "functional", "title": "Opt out of SMS", "description": "Customers can opt out of SMS.", "priority": "could", "version": 1, "status": "draft"}, {"code": "FR-005", "requirementType": "functional", "title": "View their assigned work orders on the mobile app", "description": "Technicians must be able to view their assigned work orders on the mobile app.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-006", "requirementType": "functional", "title": "Complete work orders on site and capture the customer signature", "description": "Technicians shall be able to complete work orders on site and capture the customer signature.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-007", "requirementType": "functional", "title": "Work offline and synchronise changes within 60 seconds of reconnecting", "description": "The mobile app must work offline and synchronise changes within 60 seconds of connectivity being restored.", "priority": "must", "version": 2, "status": "draft"}, {"code": "FR-008", "requirementType": "functional", "title": "Assign work orders to technicians based on skills and availability", "description": "The system shall allow dispatchers to assign work orders to technicians based on skills and availability.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-009", "requirementType": "functional", "title": "Reassign a work order", "description": "Dispatchers shall be able to reassign a work order when the assigned technician is unavailable.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-010", "requirementType": "functional", "title": "Suggest the nearest available technician with the required skill", "description": "The system should suggest the nearest available technician with the required skill for emergency work orders.", "priority": "should", "version": 1, "status": "draft"}, {"code": "FR-011", "requirementType": "functional", "title": "View the dispatch board showing all scheduled work orders for the day", "description": "Operations managers can view the dispatch board showing all scheduled work orders for the day.", "priority": "could", "version": 1, "status": "draft"}, {"code": "FR-012", "requirementType": "functional", "title": "Create work orders from customer service requests", "description": "The system shall allow dispatchers to create work orders from customer service requests.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-013", "requirementType": "functional", "title": "Validate that the site address belongs to an existing customer", "description": "The system shall validate that the site address belongs to an existing customer before a work order is saved.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-014", "requirementType": "functional", "title": "Update work orders until they are completed", "description": "Dispatchers must be able to update work orders until they are completed.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-015", "requirementType": "functional", "title": "Cancel work orders", "description": "Dispatchers can cancel work orders when the customer withdraws the request, and the system shall record the cancellation reason.", "priority": "could", "version": 1, "status": "draft"}, {"code": "FR-016", "requirementType": "functional", "title": "Export a monthly SLA report", "description": "Operations managers must be able to export a monthly SLA report.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-017", "requirementType": "functional", "title": "Track first-time fix rate per technician", "description": "The system shall track first-time fix rate per technician.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-018", "requirementType": "functional", "title": "Send the customer an email with the appointment window", "description": "When a work order is scheduled, the system shall send the customer an email with the appointment window.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-019", "requirementType": "functional", "title": "Track job progress", "description": "The system shall allow dispatchers to track job progress on a live map.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-020", "requirementType": "functional", "title": "View assigned jobs", "description": "The system shall allow technicians to view assigned jobs.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-021", "requirementType": "functional", "title": "Update job status", "description": "The system shall allow technicians to update job status.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-022", "requirementType": "functional", "title": "Capture photos", "description": "The system shall allow technicians to capture photos.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-023", "requirementType": "functional", "title": "Record parts used", "description": "The system shall allow technicians to record parts used.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-024", "requirementType": "functional", "title": "Receive SMS notifications", "description": "The system shall allow customers to receive SMS notifications.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-025", "requirementType": "functional", "title": "Review dashboards", "description": "The system shall allow managers to review dashboards.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-026", "requirementType": "functional", "title": "Manage users", "description": "The system shall allow admins to manage users.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-027", "requirementType": "functional", "title": "Receive status updates", "description": "The system shall allow customers to receive status updates.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-028", "requirementType": "functional", "title": "Monitor SLAs", "description": "The system shall allow managers to monitor SLAs.", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-029", "requirementType": "functional", "title": "Sign in and role-based access", "description": "The system shall authenticate users and restrict features according to their role (technician, customer, dispatcher, manager, admin).", "priority": "must", "version": 1, "status": "draft"}, {"code": "FR-030", "requirementType": "functional", "title": "Event notifications", "description": "The system shall notify affected users by their preferred channel when the status of their records changes.", "priority": "should", "version": 1, "status": "draft"}, {"code": "FR-031", "requirementType": "functional", "title": "Operational dashboards", "description": "The system shall provide managers with dashboards showing operational KPIs with filters by date range and team.", "priority": "should", "version": 1, "status": "draft"}, {"code": "NFR-001", "requirementType": "non_functional", "title": "300 technicians, 20 dispatchers, about 2,000 work orders", "description": "300 technicians, 20 dispatchers, about 2,000 work orders per day, with a peak between 8 and 10am.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-002", "requirementType": "non_functional", "title": "Work orders and signatures are retained for 7 years", "description": "Work orders and signatures are retained for 7 years for audit, photos for 2 years.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-003", "requirementType": "non_functional", "title": "Dispatch board shall load within 2 seconds", "description": "The dispatch board shall load within 2 seconds for up to 500 open work orders.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-004", "requirementType": "non_functional", "title": "Search results should be returned in under 500 ms", "description": "Search results should be returned in under 500 ms at the 95th percentile.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-005", "requirementType": "non_functional", "title": "System must be available 99.5% of the time", "description": "The system must be available 99.5% of the time during business hours (07:00-19:00 local time).", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-006", "requirementType": "non_functional", "title": "Nightly backups shall be retained for 35 days", "description": "Nightly backups shall be retained for 35 days and a restore must be tested every quarter.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-007", "requirementType": "non_functional", "title": "Users must authenticate via the company's single sign-on provider", "description": "All users must authenticate via the company's single sign-on provider.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-008", "requirementType": "non_functional", "title": "Customer personal data must be encrypted at rest", "description": "Customer personal data must be encrypted at rest and in transit using TLS 1.2 or higher.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-009", "requirementType": "non_functional", "title": "System shall keep an audit trail", "description": "The system shall keep an audit trail of every status change on a work order.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-010", "requirementType": "non_functional", "title": "Platform should support 200 concurrent technicians without degradation", "description": "The platform should support 200 concurrent technicians without degradation.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-011", "requirementType": "non_functional", "title": "Role-based access control", "description": "Every API request shall be authenticated and authorised by role; access attempts shall be logged.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-012", "requirementType": "non_functional", "title": "Accessibility", "description": "User interfaces shall conform to WCAG 2.1 level AA.", "priority": "should", "version": 1, "status": "draft"}, {"code": "NFR-013", "requirementType": "non_functional", "title": "GDPR compliance", "description": "The system shall meet the GDPR obligations that apply to the data it processes, including consent, retention and subject-access handling within 30 days.", "priority": "must", "version": 1, "status": "draft"}, {"code": "NFR-014", "requirementType": "non_functional", "title": "SOC 2 compliance", "description": "The system shall meet the SOC 2 obligations that apply to the data it processes, including consent, retention and subject-access handling within 30 days.", "priority": "must", "version": 1, "status": "draft"}, {"code": "RULE-001", "requirementType": "business_rule", "title": "Cut average time-to-dispatch from 4 hours to 30 minutes", "description": "Cut average time-to-dispatch from 4 hours to 30 minutes and reach an 85% first-time fix rate within 12 months.", "priority": "must", "version": 1, "status": "draft"}, {"code": "RULE-002", "requirementType": "business_rule", "title": "Technicians see only their own work orders; managers see", "description": "Technicians see only their own work orders; managers see all teams read-only; admins manage users and settings.", "priority": "must", "version": 1, "status": "draft"}, {"code": "RULE-003", "requirementType": "business_rule", "title": "Technicians must work offline for up to 8 hours", "description": "Technicians must work offline for up to 8 hours on iOS and Android phones and sync within 2 minutes of reconnecting.", "priority": "must", "version": 1, "status": "draft"}, {"code": "RULE-004", "requirementType": "business_rule", "title": "The mobile app must work offline and synchronise changes", "description": "The mobile app must work offline and synchronise changes within 2 minutes of connectivity being restored.", "priority": "must", "version": 1, "status": "draft"}, {"code": "RULE-005", "requirementType": "business_rule", "title": "The system should suggest the nearest available technician", "description": "The system should suggest the nearest available technician with the required skill for emergency work orders.", "priority": "must", "version": 1, "status": "draft"}, {"code": "RULE-006", "requirementType": "business_rule", "title": "The system shall validate that the site address belongs", "description": "The system shall validate that the site address belongs to an existing customer before a work order is saved.", "priority": "must", "version": 1, "status": "draft"}, {"code": "RULE-007", "requirementType": "business_rule", "title": "Should emergency work orders bypass the normal approval of overtime?", "description": "Should emergency work orders bypass the normal approval of overtime?", "priority": "must", "version": 1, "status": "draft"}, {"code": "TR-001", "requirementType": "technical", "title": "Mobile client support", "description": "The solution shall provide a mobile client for the two most recent major versions of iOS and Android, with offline capture synchronised within 5 minutes of reconnecting.", "priority": "must", "version": 1, "status": "draft"}, {"code": "TR-002", "requirementType": "technical", "title": "Enterprise system integration", "description": "The solution shall exchange data with the named enterprise systems through documented, versioned APIs with retry and dead-letter handling.", "priority": "must", "version": 1, "status": "draft"}, {"code": "TR-003", "requirementType": "technical", "title": "Documented REST API", "description": "The backend shall expose a versioned REST API described by an OpenAPI 3.1 specification.", "priority": "should", "version": 1, "status": "draft"}, {"code": "TR-004", "requirementType": "technical", "title": "Containerised deployment", "description": "The solution shall be deployable as containers with environment-based configuration and no secrets in images.", "priority": "should", "version": 1, "status": "draft"}], "answers": [{"code": "Q-001", "q": "What measurable business outcome defines success for FieldFlow in the first 12 months?", "a": "Cut average time-to-dispatch from 4 hours to 30 minutes and reach an 85% first-time fix rate within 12 months."}, {"code": "Q-002", "q": "Which user roles exist besides technician, customer, dispatcher, and what may each role see and change?", "a": "Dispatchers, technicians, customers, service managers and an IT admin. Technicians see only their own work orders; managers see all teams read-only; admins manage users and settings."}, {"code": "Q-003", "q": "What are the expected volumes (users, work orders per day, peak hours)?", "a": "300 technicians, 20 dispatchers, about 2,000 work orders per day, with a peak between 8 and 10am."}, {"code": "Q-004", "q": "Which existing systems must the solution integrate with, and through which interfaces?", "a": "SAP S/4HANA for invoicing through its OData APIs, and Twilio for SMS notifications."}, {"code": "Q-005", "q": "What is explicitly out of scope for the first release?", "a": "Payroll, parts purchasing and a customer self-service web portal are out of scope for release 1."}, {"code": "Q-006", "q": "What is the lifecycle (statuses and transitions) of a work order?", "a": "New -> Assigned -> In progress -> On hold -> Completed -> Invoiced. Cancelled is allowed until work starts, and requires a reason."}, {"code": "Q-007", "q": "Which data must be retained, for how long, and who owns it?", "a": "Work orders and signatures are retained for 7 years for audit, photos for 2 years. Operations owns the data."}, {"code": "Q-008", "q": "Are there regulatory or compliance obligations (for example GDPR, SOC 2, industry rules)?", "a": "GDPR applies because we serve EU customers. We are also preparing for a SOC 2 audit next year."}, {"code": "Q-009", "q": "Must the mobile experience work offline, and which devices must be supported?", "a": "Yes. Technicians must work offline for up to 8 hours on iOS and Android phones and sync within 2 minutes of reconnecting."}, {"code": "Q-010", "q": "Which events trigger notifications, through which channels, and can users opt out?", "a": "Customers get an SMS when a technician is assigned and when they are on the way; dispatchers are alerted when an SLA is at risk. Customers can opt out of SMS."}], "files": ["FIEL-brd-v1.docx", "FIEL-brd-v1.pdf", "FIEL-change_impact-v1.docx", "FIEL-change_impact-v1.pdf", "FIEL-fsd-v1.docx", "FIEL-fsd-v1.pdf", "FIEL-srs-v1.docx", "FIEL-srs-v1.pdf", "FIEL-tdd-v1.docx", "FIEL-tdd-v1.pdf", "FIEL-test_plan-v1.docx", "FIEL-test_plan-v1.pdf", "FIEL-traceability_matrix-v1.docx", "FIEL-traceability_matrix-v1.pdf", "FIEL-user_stories-v1.docx", "FIEL-user_stories-v1.pdf"]}</script>
+<script>
+(() => {
+  const STEPS = [
+    ["Setup", "register", "Create a workspace", "Organization, owner account and a strong password. Sessions use an httpOnly cookie with CSRF protection.", "/register"],
+    ["Setup", "new-project", "Describe the business idea", "The only required input is a plain-language idea. Here the FieldFlow example is used.", "/command-center"],
+    ["Setup", "source-uploaded", "Upload a supporting document", "The spec is parsed, split into chunks and indexed for retrieval. Uploaded files are treated as untrusted text and never executed.", "/projects/…/command-center"],
+    ["Discovery", "discovery-questions", "Discovery questions", "The Business Analyst agent proposes stakeholders, objectives and ten prioritised clarification questions.", "/projects/…/discovery"],
+    ["Discovery", "discovery-answered", "All ten questions answered", "Each answer was typed and saved in the UI. Answers become context for every downstream agent.", "/projects/…/discovery"],
+    ["Discovery", "stakeholders", "Stakeholder register", "Stakeholders with influence and interest, plotted on a power/interest matrix.", "/projects/…/discovery"],
+    ["Blueprint", "command-center", "Full blueprint in the AI Command Center", "One click runs the LangGraph workflow: Business Analyst → Requirements Engineer → Solution Architect and Product Manager in parallel → QA Engineer → Independent Reviewer. Every step succeeded.", "/projects/…/command-center"],
+    ["Requirements", "business", "Business Intelligence", "Scope, nine business requirements, seven business rules and three processes.", "/projects/…/business"],
+    ["Requirements", "requirements", "Requirements Workspace", "Versioned functional, non-functional and technical requirements with priority, trace counts and approval state.", "/projects/…/requirements"],
+    ["Requirements", "requirement-approved", "Approve a requirement", "A reviewer approves FR-001. Approved items are locked, so agents can never overwrite them; edits go through a change request.", "/projects/…/requirements"],
+    ["Requirements", "dependency-map", "Dependency map", "The mobile-client technical requirement linked to the mobile and offline functional requirements it supports.", "/projects/…/requirements"],
+    ["Architecture", "architecture", "System architecture", "Generated system topology rendered as a diagram, with the reasoning behind it.", "/projects/…/architecture"],
+    ["Architecture", "data-model", "Data model", "Entities and relationships derived from the requirements, as an ER diagram.", "/projects/…/architecture"],
+    ["Architecture", "api", "API specification", "32 endpoints with an OpenAPI 3.1 export.", "/projects/…/architecture"],
+    ["Planning & QA", "roadmap", "Roadmap", "Milestones and epics laid out for delivery.", "/projects/…/planning"],
+    ["Planning & QA", "stories", "Epics and user stories", "31 stories with Given/When/Then acceptance criteria and story points, each linked to its requirement.", "/projects/…/planning"],
+    ["Planning & QA", "qa", "QA Intelligence", "Test plan plus 137 functional, negative, boundary and integration tests. Every acceptance criterion has a test.", "/projects/…/qa"],
+    ["Traceability & change", "traceability", "Traceability Center", "Objective → business requirement → requirement → story → criterion → test. 64 of 64 chains are complete; gaps are listed separately.", "/projects/…/traceability"],
+    ["Traceability & change", "change-request", "Raise a change request", "Change offline sync from 2 minutes to 60 seconds. The impact on stories and tests is previewed before submitting.", "/projects/…/changes"],
+    ["Traceability & change", "change-applied", "Change approved and applied", "The reviewer assessment rates the risk as medium. After approval the requirement moves to version 2 and impacted items are flagged.", "/projects/…/changes"],
+    ["Documents", "srs-preview", "Software Requirements Specification", "The Documentation agent assembles the SRS from the current artifacts, ready to export.", "/projects/…/documents"],
+    ["Documents", "documents", "All eight documents", "BRD, SRS, FSD, TDD, user stories, test plan, traceability matrix and change impact report.", "/projects/…/documents"],
+    ["Documents", "final-dashboard", "Project dashboard at 100%", "Every blueprint stage is complete. The mock-mode banner says plainly that no language model was used.", "/projects/…/command-center"],
+    ["Documents", "overview", "Portfolio overview", "Totals across all projects in the workspace.", "/overview"],
+  ].map(([stage, slug, title, desc, url], i) => ({ stage, file: `shots/${String(i + 1).padStart(2, "0")}-${slug}.webp`, title, desc, url, i }));
+
+  const $ = (id) => document.getElementById(id);
+  const stepsNav = $("steps"), select = $("stage-select"), img = $("shot");
+  let current = 0;
+
+  // step list grouped by stage
+  const stages = [...new Set(STEPS.map((s) => s.stage))];
+  stages.forEach((stage) => {
+    const group = document.createElement("div");
+    group.className = "stage";
+    const name = document.createElement("div");
+    name.className = "stage-name";
+    name.textContent = stage;
+    group.append(name);
+    const og = document.createElement("optgroup");
+    og.label = stage;
+    STEPS.filter((s) => s.stage === stage).forEach((s) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "step";
+      b.dataset.i = s.i;
+      const num = document.createElement("span");
+      num.className = "num";
+      num.textContent = String(s.i + 1).padStart(2, "0");
+      const t = document.createElement("span");
+      t.textContent = s.title;
+      b.append(num, t);
+      b.addEventListener("click", () => show(s.i, true));
+      group.append(b);
+      const o = document.createElement("option");
+      o.value = s.i;
+      o.textContent = `${s.i + 1}. ${s.title}`;
+      og.append(o);
+    });
+    stepsNav.append(group);
+    select.append(og);
+  });
+  select.addEventListener("change", () => show(Number(select.value), true));
+
+  function show(i, updateHash) {
+    current = Math.max(0, Math.min(STEPS.length - 1, i));
+    const s = STEPS[current];
+    img.src = s.file;
+    img.alt = `${s.title}: ${s.desc}`;
+    $("cap-title").textContent = s.title;
+    $("cap-desc").textContent = s.desc;
+    $("url").textContent = "localhost:3000" + s.url;
+    $("counter").textContent = `${current + 1} / ${STEPS.length}`;
+    $("prev").disabled = current === 0;
+    $("next").disabled = current === STEPS.length - 1;
+    $("shot-box").scrollTop = 0;
+    select.value = String(current);
+    stepsNav.querySelectorAll(".step").forEach((b) => b.setAttribute("aria-current", String(Number(b.dataset.i) === current)));
+    const active = stepsNav.querySelector('.step[aria-current="true"]');
+    if (active && updateHash) active.scrollIntoView({ block: "nearest" });
+    if (updateHash) { try { history.replaceState(null, "", `#step-${current + 1}`); } catch (e) { /* ignore */ } }
+    // warm the next image
+    if (STEPS[current + 1]) { const pre = new Image(); pre.src = STEPS[current + 1].file; }
+  }
+  $("prev").addEventListener("click", () => show(current - 1, true));
+  $("next").addEventListener("click", () => show(current + 1, true));
+  document.addEventListener("keydown", (e) => {
+    if (e.target.closest && e.target.closest("input, textarea, select")) return;
+    if (e.key === "ArrowRight") show(current + 1, true);
+    if (e.key === "ArrowLeft") show(current - 1, true);
+  });
+  const fromHash = () => { const m = /^#step-(\d+)$/.exec(location.hash); return m ? Number(m[1]) - 1 : 0; };
+  window.addEventListener("hashchange", () => show(fromHash(), false));
+  show(fromHash(), false);
+
+  // data
+  let data = { requirements: [], answers: [], files: [] };
+  try { data = JSON.parse($("run-data").textContent); } catch (e) { /* render without data */ }
+
+  const qa = $("qa");
+  data.answers.forEach((x) => {
+    const li = document.createElement("li");
+    const c = document.createElement("span"); c.className = "c"; c.textContent = x.code;
+    const q = document.createElement("span"); q.className = "q"; q.textContent = x.q;
+    const a = document.createElement("span"); a.className = "a"; a.textContent = x.a || "—";
+    li.append(c, q, a);
+    qa.append(li);
+  });
+
+  const TYPES = [["functional", "Functional"], ["non_functional", "Non-functional"], ["technical", "Technical"], ["business", "Business"], ["business_rule", "Rules"], ["all", "All"]];
+  let type = "functional", query = "";
+  const tabs = $("type-tabs");
+  TYPES.forEach(([key, label]) => {
+    const n = key === "all" ? data.requirements.length : data.requirements.filter((r) => r.requirementType === key).length;
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tab"; b.setAttribute("role", "tab"); b.dataset.type = key;
+    b.append(document.createTextNode(label));
+    const sp = document.createElement("span"); sp.textContent = n; b.append(sp);
+    b.addEventListener("click", () => { type = key; renderReqs(); });
+    tabs.append(b);
+  });
+  $("req-search").addEventListener("input", (e) => { query = e.target.value.trim().toLowerCase(); renderReqs(); });
+  function renderReqs() {
+    tabs.querySelectorAll(".tab").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.type === type)));
+    const body = $("req-body");
+    body.replaceChildren();
+    const rows = data.requirements.filter((r) => (type === "all" || r.requirementType === type) && (!query || `${r.code} ${r.title} ${r.description}`.toLowerCase().includes(query)));
+    if (!rows.length) {
+      const tr = document.createElement("tr"); const td = document.createElement("td");
+      td.colSpan = 4; td.textContent = "No requirements match this search."; td.style.color = "var(--muted)";
+      tr.append(td); body.append(tr); return;
+    }
+    rows.forEach((r) => {
+      const tr = document.createElement("tr");
+      const code = document.createElement("td"); code.className = "code"; code.textContent = r.code;
+      if (r.version > 1) { const v = document.createElement("span"); v.className = "v2"; v.textContent = `v${r.version}`; code.append(v); }
+      const main = document.createElement("td");
+      const t = document.createElement("div"); t.className = "title"; t.textContent = r.title;
+      const d = document.createElement("div"); d.className = "desc"; d.textContent = r.description;
+      main.append(t, d);
+      const pr = document.createElement("td"); const pp = document.createElement("span");
+      pp.className = `pill p-${r.priority}`; pp.textContent = r.priority[0].toUpperCase() + r.priority.slice(1); pr.append(pp);
+      const st = document.createElement("td"); const sp = document.createElement("span");
+      sp.className = `pill s-${r.status === "approved" ? "approved" : "draft"}`; sp.textContent = r.status[0].toUpperCase() + r.status.slice(1); st.append(sp);
+      tr.append(code, main, pr, st);
+      body.append(tr);
+    });
+  }
+  renderReqs();
+
+  // documents with the downloads capability
+  const DOCS = [
+    ["brd", "Business Requirements Document"], ["srs", "Software Requirements Specification"], ["fsd", "Functional Specification"],
+    ["tdd", "Technical Design Document"], ["user_stories", "User Story Document"], ["test_plan", "Test Plan"],
+    ["traceability_matrix", "Traceability Matrix"], ["change_impact", "Change Impact Report"],
+  ];
+  const EXTRA = [["openapi.json", "OpenAPI 3.1 specification", "Save JSON"], ["FIEL-acceptance-feature.txt", "Acceptance criteria (Gherkin)", "Save TXT"]];
+  const filesEl = $("files"), status = $("dl-status");
+  const buttons = [];
+  function card(title, meta, entries) {
+    const c = document.createElement("div"); c.className = "file";
+    const n = document.createElement("div"); n.className = "name"; n.textContent = title;
+    const m = document.createElement("div"); m.className = "meta"; m.textContent = meta;
+    const a = document.createElement("div"); a.className = "actions";
+    entries.forEach(([label, filename]) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "btn"; b.textContent = label; b.disabled = true;
+      b.addEventListener("click", () => save(filename, b));
+      buttons.push(b); a.append(b);
+    });
+    c.append(n, m, a); filesEl.append(c);
+  }
+  DOCS.forEach(([kind, title]) => card(title, `FIEL-${kind}-v1.pdf`, [["Save PDF", `FIEL-${kind}-v1.pdf`]]));
+  EXTRA.forEach(([file, title, fmt]) => card(title, file, [[fmt, file]]));
+
+  let downloads = null;
+  status.textContent = "Checking whether this view can save files…";
+  const useDownloads = () => (window.claude && window.claude.use ? window.claude.use("downloads") : null);
+  const ready = useDownloads() || new Promise((res) => window.addEventListener("load", () => res(useDownloads()), { once: true }));
+  Promise.resolve(ready).then((d) => {
+    downloads = d;
+    if (downloads) { buttons.forEach((b) => { b.disabled = false; }); status.textContent = ""; }
+    else status.textContent = "Saving files isn't available in this view. The same documents are attached in the chat.";
+  }).catch(() => { status.textContent = "Saving files isn't available in this view. The same documents are attached in the chat."; });
+
+  async function save(filename, btn) {
+    if (!downloads) return;
+    btn.disabled = true;
+    status.textContent = `Preparing ${filename}…`;
+    try {
+      const res = await fetch(`files/${filename}`);
+      if (!res.ok) throw { code: "missing", message: `HTTP ${res.status}` };
+      const blob = await res.blob();
+      await downloads.save({ filename, data: blob });
+      status.textContent = `Saved ${filename}.`;
+    } catch (e) {
+      const code = e && e.code;
+      status.textContent = code === "declined" ? "Download cancelled." :
+        code === "rate_limited" ? "Another save is still open. Finish it, then try again." :
+        `Couldn't save ${filename}. The same file is attached in the chat.`;
+    } finally { btn.disabled = false; }
+  }
+})();
+</script>
+
+</body></html>

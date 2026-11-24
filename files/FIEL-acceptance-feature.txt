@@ -1,0 +1,621 @@
+# FieldFlow acceptance criteria (ReqMind AI)
+
+@US-001
+Feature: Rate the service
+  As a customer
+  I want to rate the service
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-001
+  @AC-001 @acceptance @priority-could
+  Scenario: AC-001 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a customer with the required permissions
+    When I rate the service
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-002
+  @AC-002 @acceptance @priority-could
+  Scenario: AC-002 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a customer
+    When I try to rate service with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-002
+Feature: Integrate with our SAP ERP for invoicing
+  As a technician
+  I want to the system to integrate with our SAP ERP for invoicing
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-003
+  @AC-003 @acceptance @priority-must
+  Scenario: AC-003 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a technician and the conditions for this behaviour are met
+    When the system needs to integrate with SAP ERP for invoicing
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-004
+  @AC-004 @acceptance @priority-must
+  Scenario: AC-004 the system takes no action and reports the reason
+    Given I am signed in as a technician
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
+
+@US-003
+Feature: Work offline for up to 8 hours on iOS
+  As a technician
+  I want to work offline for up to 8 hours on iOS and Android phones and sync within 2 minutes of reconnecting
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-005, TC-096
+  @AC-005 @acceptance @priority-must
+  Scenario: AC-005 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a technician with the required permissions
+    When I work offline for up to 8 hours
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-006
+  @AC-006 @acceptance @priority-must
+  Scenario: AC-006 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a technician
+    When I try to work offline with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-004
+Feature: Opt out of SMS
+  As a customer
+  I want to opt out of SMS
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-007
+  @AC-007 @acceptance @priority-could
+  Scenario: AC-007 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a customer with the required permissions
+    When I opt out of SMS
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-008
+  @AC-008 @acceptance @priority-could
+  Scenario: AC-008 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a customer
+    When I try to opt out with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-005
+Feature: View their assigned work orders on the mobile app
+  As a technician
+  I want to view their assigned work orders on the mobile app
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-009
+  @AC-009 @acceptance @priority-must
+  Scenario: AC-009 the system shows the assigned work orders I am allowed to see
+    Given I am signed in as a technician with the required permissions
+    When I view assigned work orders on the mobile app
+    Then the system shows the assigned work orders I am allowed to see
+
+  # Precondition: Verified by TC-010
+  @AC-010 @acceptance @priority-must
+  Scenario: AC-010 the system denies access and explains why
+    Given I am signed in as a technician
+    When I try to view assigned work orders that belong to another team or customer
+    Then the system denies access and explains why
+
+@US-006
+Feature: Complete work orders on site and capture the customer signature
+  As a technician
+  I want to complete work orders on site and capture the customer signature
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-011
+  @AC-011 @acceptance @priority-must
+  Scenario: AC-011 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a technician with the required permissions
+    When I complete work orders on site
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-012
+  @AC-012 @acceptance @priority-must
+  Scenario: AC-012 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a technician
+    When I try to complete work orders with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-007
+Feature: Work offline and synchronise changes within 2 minutes of connectivity being restored
+  As a technician
+  I want to the system to work offline and synchronise changes within 2 minutes of connectivity being restored
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-013, TC-100
+  @AC-013 @acceptance @priority-must
+  Scenario: AC-013 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a technician and the conditions for this behaviour are met
+    When the system needs to work offline and synchronise changes within 2 minutes
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-014
+  @AC-014 @acceptance @priority-must
+  Scenario: AC-014 the system takes no action and reports the reason
+    Given I am signed in as a technician
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
+
+@US-008
+Feature: Assign work orders to technicians based on skills and availability
+  As a technician
+  I want to assign work orders to technicians based on skills and availability
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-015
+  @AC-015 @acceptance @priority-must
+  Scenario: AC-015 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a technician with the required permissions
+    When I assign work orders to technicians based on skills
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-016
+  @AC-016 @acceptance @priority-must
+  Scenario: AC-016 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a technician
+    When I try to assign work orders with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-009
+Feature: Reassign a work order
+  As a technician
+  I want to reassign a work order when the assigned technician is unavailable
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-017
+  @AC-017 @acceptance @priority-must
+  Scenario: AC-017 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a technician with the required permissions
+    When I reassign a work order
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-018
+  @AC-018 @acceptance @priority-must
+  Scenario: AC-018 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a technician
+    When I try to reassign work order with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-010
+Feature: Suggest the nearest available technician with the required skill
+  As a technician
+  I want to the system to suggest the nearest available technician with the required skill for emergency work orders
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-019
+  @AC-019 @acceptance @priority-should
+  Scenario: AC-019 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a technician and the conditions for this behaviour are met
+    When the system needs to suggest the nearest available technician
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-020
+  @AC-020 @acceptance @priority-should
+  Scenario: AC-020 the system takes no action and reports the reason
+    Given I am signed in as a technician
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
+
+@US-011
+Feature: View the dispatch board showing all scheduled work orders for the day
+  As a manager
+  I want to view the dispatch board showing all scheduled work orders for the day
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-021
+  @AC-021 @acceptance @priority-could
+  Scenario: AC-021 the system shows the dispatch board showing all scheduled work orders I am allowed to see
+    Given I am signed in as a manager with the required permissions
+    When I view the dispatch board showing all scheduled work orders
+    Then the system shows the dispatch board showing all scheduled work orders I am allowed to see
+
+  # Precondition: Verified by TC-022
+  @AC-022 @acceptance @priority-could
+  Scenario: AC-022 the system denies access and explains why
+    Given I am signed in as a manager
+    When I try to view dispatch board showing all scheduled work orders that belong to another team or customer
+    Then the system denies access and explains why
+
+@US-012
+Feature: Create work orders from customer service requests
+  As a customer
+  I want to create work orders from customer service requests
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-023
+  @AC-023 @acceptance @priority-must
+  Scenario: AC-023 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a customer with the required permissions
+    When I create work orders from customer service requests
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-024
+  @AC-024 @acceptance @priority-must
+  Scenario: AC-024 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a customer
+    When I try to create work orders with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-013
+Feature: Validate that the site address belongs to an existing customer
+  As a customer
+  I want to the system to validate that the site address belongs to an existing customer before a work order is saved
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-025
+  @AC-025 @acceptance @priority-must
+  Scenario: AC-025 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a customer and the conditions for this behaviour are met
+    When the system needs to validate that the site address belongs
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-026
+  @AC-026 @acceptance @priority-must
+  Scenario: AC-026 the system takes no action and reports the reason
+    Given I am signed in as a customer
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
+
+@US-014
+Feature: Update work orders until they are completed
+  As a dispatcher
+  I want to update work orders until they are completed
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-027
+  @AC-027 @acceptance @priority-must
+  Scenario: AC-027 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a dispatcher with the required permissions
+    When I update work orders until they are completed
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-028
+  @AC-028 @acceptance @priority-must
+  Scenario: AC-028 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a dispatcher
+    When I try to update work orders with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-015
+Feature: Cancel work orders
+  As a customer
+  I want to cancel work orders when the customer withdraws the request
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-029
+  @AC-029 @acceptance @priority-could
+  Scenario: AC-029 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a customer with the required permissions
+    When I cancel work orders when the customer withdraws the request
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-030
+  @AC-030 @acceptance @priority-could
+  Scenario: AC-030 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a customer
+    When I try to cancel work orders with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-016
+Feature: Export a monthly SLA report
+  As a manager
+  I want to export a monthly SLA report
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-031
+  @AC-031 @acceptance @priority-must
+  Scenario: AC-031 the system produces the monthly SLA report as a downloadable file
+    Given I am signed in as a manager with the required permissions
+    When I export a monthly SLA report
+    Then the system produces the monthly SLA report as a downloadable file
+
+  # Precondition: Verified by TC-032
+  @AC-032 @acceptance @priority-must
+  Scenario: AC-032 the system explains that there is nothing to export
+    Given I am signed in as a manager
+    When I try to export monthly SLA report with no data in the selected period
+    Then the system explains that there is nothing to export
+
+@US-017
+Feature: Track first-time fix rate per technician
+  As a technician
+  I want to the system to track first-time fix rate per technician
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-033
+  @AC-033 @acceptance @priority-must
+  Scenario: AC-033 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a technician and the conditions for this behaviour are met
+    When the system needs to track first-time fix rate per technician
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-034
+  @AC-034 @acceptance @priority-must
+  Scenario: AC-034 the system takes no action and reports the reason
+    Given I am signed in as a technician
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
+
+@US-018
+Feature: Send the customer an email with the appointment window
+  As a customer
+  I want to the system to send the customer an email with the appointment window
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-035
+  @AC-035 @acceptance @priority-must
+  Scenario: AC-035 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a customer and the conditions for this behaviour are met
+    When the system needs to send the customer an email with the appointment window
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-036
+  @AC-036 @acceptance @priority-must
+  Scenario: AC-036 the system takes no action and reports the reason
+    Given I am signed in as a customer
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
+
+@US-019
+Feature: Track job progress
+  As a dispatcher
+  I want to track job progress on a live map
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-037
+  @AC-037 @acceptance @priority-must
+  Scenario: AC-037 the system shows the job progress I am allowed to see
+    Given I am signed in as a dispatcher with the required permissions
+    When I track job progress on a live map
+    Then the system shows the job progress I am allowed to see
+
+  # Precondition: Verified by TC-038
+  @AC-038 @acceptance @priority-must
+  Scenario: AC-038 the system denies access and explains why
+    Given I am signed in as a dispatcher
+    When I try to track job progress that belong to another team or customer
+    Then the system denies access and explains why
+
+@US-020
+Feature: View assigned jobs
+  As a technician
+  I want to view assigned jobs
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-039
+  @AC-039 @acceptance @priority-must
+  Scenario: AC-039 the system shows the assigned jobs I am allowed to see
+    Given I am signed in as a technician with the required permissions
+    When I view assigned jobs
+    Then the system shows the assigned jobs I am allowed to see
+
+  # Precondition: Verified by TC-040
+  @AC-040 @acceptance @priority-must
+  Scenario: AC-040 the system denies access and explains why
+    Given I am signed in as a technician
+    When I try to view assigned jobs that belong to another team or customer
+    Then the system denies access and explains why
+
+@US-021
+Feature: Update job status
+  As a technician
+  I want to update job status
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-041
+  @AC-041 @acceptance @priority-must
+  Scenario: AC-041 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a technician with the required permissions
+    When I update job status
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-042
+  @AC-042 @acceptance @priority-must
+  Scenario: AC-042 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a technician
+    When I try to update job status with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-022
+Feature: Capture photos
+  As a technician
+  I want to capture photos
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-043
+  @AC-043 @acceptance @priority-must
+  Scenario: AC-043 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a technician with the required permissions
+    When I capture photos
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-044
+  @AC-044 @acceptance @priority-must
+  Scenario: AC-044 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a technician
+    When I try to capture photos with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-023
+Feature: Record parts used
+  As a technician
+  I want to record parts used
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-045
+  @AC-045 @acceptance @priority-must
+  Scenario: AC-045 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a technician with the required permissions
+    When I record parts used
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-046
+  @AC-046 @acceptance @priority-must
+  Scenario: AC-046 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a technician
+    When I try to record parts used with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-024
+Feature: Receive SMS notifications
+  As a customer
+  I want to receive SMS notifications
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-047
+  @AC-047 @acceptance @priority-must
+  Scenario: AC-047 I receive the SMS notifications through my preferred channel
+    Given I am signed in as a customer with the required permissions
+    When I receive SMS notifications
+    Then I receive the SMS notifications through my preferred channel
+
+  # Precondition: Verified by TC-048
+  @AC-048 @acceptance @priority-must
+  Scenario: AC-048 the system does not send the SMS notifications and records the opt-out
+    Given I am signed in as a customer
+    When I have opted out of this channel
+    Then the system does not send the SMS notifications and records the opt-out
+
+@US-025
+Feature: Review dashboards
+  As a manager
+  I want to review dashboards
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-049
+  @AC-049 @acceptance @priority-must
+  Scenario: AC-049 the system shows the dashboards I am allowed to see
+    Given I am signed in as a manager with the required permissions
+    When I review dashboards
+    Then the system shows the dashboards I am allowed to see
+
+  # Precondition: Verified by TC-050
+  @AC-050 @acceptance @priority-must
+  Scenario: AC-050 the system denies access and explains why
+    Given I am signed in as a manager
+    When I try to review dashboards that belong to another team or customer
+    Then the system denies access and explains why
+
+@US-026
+Feature: Manage users
+  As a user
+  I want to manage users
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-051
+  @AC-051 @acceptance @priority-must
+  Scenario: AC-051 the system saves the change, shows a confirmation and records it in the audit log
+    Given I am signed in as a user with the required permissions
+    When I manage users
+    Then the system saves the change, shows a confirmation and records it in the audit log
+
+  # Precondition: Verified by TC-052
+  @AC-052 @acceptance @priority-must
+  Scenario: AC-052 the system rejects the request and explains which fields must be corrected
+    Given I am signed in as a user
+    When I try to manage users with missing or invalid information
+    Then the system rejects the request and explains which fields must be corrected
+
+@US-027
+Feature: Receive status updates
+  As a customer
+  I want to receive status updates
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-053
+  @AC-053 @acceptance @priority-must
+  Scenario: AC-053 I receive the status updates through my preferred channel
+    Given I am signed in as a customer with the required permissions
+    When I receive status updates
+    Then I receive the status updates through my preferred channel
+
+  # Precondition: Verified by TC-054
+  @AC-054 @acceptance @priority-must
+  Scenario: AC-054 the system does not send the status updates and records the opt-out
+    Given I am signed in as a customer
+    When I have opted out of this channel
+    Then the system does not send the status updates and records the opt-out
+
+@US-028
+Feature: Monitor SLAs
+  As a manager
+  I want to monitor SLAs
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-055
+  @AC-055 @acceptance @priority-must
+  Scenario: AC-055 the system shows the SLAs I am allowed to see
+    Given I am signed in as a manager with the required permissions
+    When I monitor SLAs
+    Then the system shows the SLAs I am allowed to see
+
+  # Precondition: Verified by TC-056
+  @AC-056 @acceptance @priority-must
+  Scenario: AC-056 the system denies access and explains why
+    Given I am signed in as a manager
+    When I try to monitor SLAs that belong to another team or customer
+    Then the system denies access and explains why
+
+@US-029
+Feature: Sign in and role-based access
+  As a technician
+  I want to the system to authenticate users and restrict features according to their role (technician, customer, dispatcher, manager, admin)
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-057
+  @AC-057 @acceptance @priority-must
+  Scenario: AC-057 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a technician and the conditions for this behaviour are met
+    When the system needs to authenticate users and restrict features according
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-058
+  @AC-058 @acceptance @priority-must
+  Scenario: AC-058 the system takes no action and reports the reason
+    Given I am signed in as a technician
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
+
+@US-030
+Feature: Event notifications
+  As a user
+  I want to the system to notify affected users by their preferred channel when the status of their records changes
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-059
+  @AC-059 @acceptance @priority-should
+  Scenario: AC-059 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a user and the conditions for this behaviour are met
+    When the system needs to notify affected users by preferred channel
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-060
+  @AC-060 @acceptance @priority-should
+  Scenario: AC-060 the system takes no action and reports the reason
+    Given I am signed in as a user
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
+
+@US-031
+Feature: Operational dashboards
+  As a manager
+  I want to the system to provide managers with dashboards showing operational KPIs with filters by date range and team
+  So that I can complete my work accurately without manual workarounds
+
+  # Precondition: Verified by TC-061
+  @AC-061 @acceptance @priority-should
+  Scenario: AC-061 the system does so automatically and records that it did in the audit log
+    Given I am signed in as a manager and the conditions for this behaviour are met
+    When the system needs to provide managers with dashboards showing operational KPIs
+    Then the system does so automatically and records that it did in the audit log
+
+  # Precondition: Verified by TC-062
+  @AC-062 @acceptance @priority-should
+  Scenario: AC-062 the system takes no action and reports the reason
+    Given I am signed in as a manager
+    When the conditions for this behaviour are not met or required data is missing
+    Then the system takes no action and reports the reason
